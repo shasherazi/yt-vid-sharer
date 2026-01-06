@@ -1,0 +1,51 @@
+{
+  "title": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)",
+  "publishedAt": "2009-10-25T06:57:33Z",
+  "duration": "PT3M34S",
+  "channelTitle": "Rick Astley",
+  "thumbnails": {
+    "default": {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg",
+      "width": 120,
+      "height": 90
+    },
+    "medium": {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+      "width": 320,
+      "height": 180
+    },
+    "high": {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+      "width": 480,
+      "height": 360
+    },
+    "standard": {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/sddefault.jpg",
+      "width": 640,
+      "height": 480
+    },
+    "maxres": {
+      "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "channelThumbnails": {
+    "default": {
+      "url": "https://yt3.ggpht.com/vewxKdtll-rntHAMDPY_Qa6hPac3-J2sCFFUwvGSSR0i7hB4g5rNfF39lCEcjGvsYI0RWx7V1A=s88-c-k-c0x00ffffff-no-rj",
+      "width": 88,
+      "height": 88
+    },
+    "medium": {
+      "url": "https://yt3.ggpht.com/vewxKdtll-rntHAMDPY_Qa6hPac3-J2sCFFUwvGSSR0i7hB4g5rNfF39lCEcjGvsYI0RWx7V1A=s240-c-k-c0x00ffffff-no-rj",
+      "width": 240,
+      "height": 240
+    },
+    "high": {
+      "url": "https://yt3.ggpht.com/vewxKdtll-rntHAMDPY_Qa6hPac3-J2sCFFUwvGSSR0i7hB4g5rNfF39lCEcjGvsYI0RWx7V1A=s800-c-k-c0x00ffffff-no-rj",
+      "width": 800,
+      "height": 800
+    }
+  }
+}
+

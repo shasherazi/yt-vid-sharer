@@ -26,9 +26,17 @@ export default function Form() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const res = await fetch("/api/yt", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
     console.log(data);
-  }
+    console.log("Response from /api/yt:", res);
+  };
 
   return (
     <Card className="w-full max-w-lg mt-6 lg:mt-10">
