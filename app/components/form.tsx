@@ -18,7 +18,11 @@ const formSchema = z.object({
   url: z.url("Please enter a valid URL"),
 });
 
-export default function Form() {
+export default function Form({
+  onResponse,
+}: {
+  onResponse: (data: any) => void;
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,6 +31,9 @@ export default function Form() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    // clear previous onResponse
+    onResponse(null);
+
     const res = await fetch("/api/yt", {
       method: "POST",
       headers: {
@@ -34,8 +41,8 @@ export default function Form() {
       },
       body: JSON.stringify(data),
     });
-    console.log(data);
-    console.log("Response from /api/yt:", res);
+    const result = await res.json();
+    onResponse(result);
   };
 
   return (
