@@ -9,26 +9,41 @@ export async function POST(request: Request) {
   // https://www.youtube.com/watch?v=Ts6SW099X08
   // https://youtu.be/Ts6SW099X08
   // https://www.youtube.com/shorts/qOaURdxBlvE
+  // https://youtube.com/shorts/CHM_Yk6szaI?si=CyJkVfD_IhQl63St
   const { url } = await request.json();
+
   const id = (() => {
-    const urlObj = new URL(url);
-    if (urlObj.hostname === "youtu.be") {
-      return urlObj.pathname.slice(1).split("?")[0];
-    } else if (urlObj.hostname === "www.youtube.com") {
-      if (urlObj.pathname === "/watch") {
-        return urlObj.searchParams.get("v");
-      } else if (urlObj.pathname.startsWith("/shorts/")) {
-        return urlObj.pathname.split("/")[2];
+    try {
+      const urlObj = new URL(url);
+
+      // 1. Normalize hostname: remove "www." and "m." to handle all variations
+      const hostname = urlObj.hostname.replace(/^(www\.|m\.)/, "");
+
+      // 2. Handle Shortened Links (youtu.be/ID)
+      if (hostname === "youtu.be") {
+        return urlObj.pathname.slice(1);
       }
+
+      // 3. Handle Standard Links (youtube.com)
+      if (hostname === "youtube.com") {
+        // Case: /watch?v=ID
+        if (urlObj.pathname === "/watch") {
+          return urlObj.searchParams.get("v");
+        }
+        // Case: /shorts/ID
+        else if (urlObj.pathname.startsWith("/shorts/")) {
+          return urlObj.pathname.split("/")[2];
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error parsing URL:", error);
+      return null;
     }
-    return null;
   })();
 
   if (!id) {
-    return new Response(
-      JSON.stringify({ error: "Invalid YouTube URL provided." }),
-      { status: 400 },
-    );
+    return Response.json({ error: "Invalid YouTube URL" }, { status: 400 });
   }
 
   const video = await youtube.videos.list({
@@ -56,6 +71,8 @@ export async function POST(request: Request) {
     thumbnails: video.data.items![0].snippet!.thumbnails,
     channelThumbnails: channel.data.items![0].snippet!.thumbnails,
   };
+
+  console.log(response);
 
   return new Response(JSON.stringify(response), { status: 200 });
 }

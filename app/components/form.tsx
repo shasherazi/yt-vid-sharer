@@ -37,18 +37,24 @@ export default function Form({
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     // clear previous onResponse
     onResponse(null);
-
     handleIsLoading(true);
-    const res = await fetch("/api/yt", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    onResponse(result);
-    handleIsLoading(false);
+    let result = null;
+
+    try {
+      const res = await fetch("/api/yt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      result = await res.json();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      onResponse(result);
+      handleIsLoading(false);
+    }
   };
 
   return (

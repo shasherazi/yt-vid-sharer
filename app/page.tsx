@@ -23,6 +23,7 @@ interface FormResponse {
     medium: { url: string; width: number; height: number };
     high: { url: string; width: number; height: number };
   };
+  error?: string;
 }
 
 export default function Home() {
@@ -59,13 +60,15 @@ export default function Home() {
         />
       </div>
 
-      {formResponse && (
+      {formResponse?.error ? (
+        <p className="text-red-500 mt-4">{formResponse.error}</p>
+      ) : formResponse ? (
         <YTImage
           {...(formResponse as FormResponse)}
           handleIsLoading={handleIsLoading}
           handleGeneratedImageUrl={handleGeneratedImageUrl}
         />
-      )}
+      ) : null}
 
       <div className="flex-1 w-full min-h-0 flex items-center justify-center py-6">
         {/* if loading has finished and image is generated then show the image */}
@@ -77,8 +80,10 @@ export default function Home() {
             className="max-h-full max-w-full w-auto h-auto rounded-xl shadow-2xl border border-gray-200 object-contain"
           />
         ) : isLoading ? (
-          // Optional: A placeholder while canvas is drawing (usually milliseconds, but good for UX)
-          <div className="h-full aspect-[1080/1014] max-h-full bg-gray-200 animate-pulse rounded-xl" />
+          formResponse ? (
+            // Optional: A placeholder while canvas is drawing (usually milliseconds, but good for UX)
+            <div className="h-full aspect-1080/1014 max-h-full bg-gray-200 animate-pulse rounded-xl" />
+          ) : null
         ) : null}
       </div>
     </div>
