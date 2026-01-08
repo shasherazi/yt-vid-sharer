@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import QRCode from "qrcode";
 
-interface YTImageProps {
+interface FormResponse {
+  id: string;
   title: string;
   publishedAt: string;
   duration: string;
@@ -12,8 +14,8 @@ interface YTImageProps {
     default: { url: string; width: number; height: number };
     medium: { url: string; width: number; height: number };
     high: { url: string; width: number; height: number };
-    standard?: { url: string; width: number; height: number };
-    maxres?: { url: string; width: number; height: number };
+    standard: { url: string; width: number; height: number };
+    maxres: { url: string; width: number; height: number };
   };
   channelThumbnails: {
     default: { url: string; width: number; height: number };
@@ -22,10 +24,18 @@ interface YTImageProps {
   };
 }
 
+interface YTImageProps extends FormResponse {
+  handleIsLoading?: (loading: boolean) => void;
+  handleGeneratedImageUrl?: (url: string) => void;
+}
+
 export default function YTImage(props: YTImageProps) {
-  const thumbnailUrl = props.thumbnails.high.url;
-  const avatarUrl = props.channelThumbnails.default.url;
-  const qrUrl = "https://i.ibb.co/Z6HsRjsF/qr-code.png";
+  const thumbnailUrl =
+    props.thumbnails.maxres?.url ||
+    props.thumbnails.high?.url ||
+    "/assets/thumbnail.jpg";
+  const avatarUrl = props.channelThumbnails.high?.url || "/assets/avatar.jpg";
+  const videoUrl = `https://youtu.be/${props.id}`;
 
   const title = props.title;
   const channelName = props.channelTitle;
@@ -51,16 +61,16 @@ export default function YTImage(props: YTImageProps) {
     duration: {
       x: 932, // This will be recalculated to align right
       y: 534,
-      width: 128,
+      width: 64,
       height: 54,
       backgroundColor: "rgba(0, 0, 0, 0.6)",
       borderRadius: 10,
       paddingX: 16, // Horizontal padding for the text
       text: {
-        x: 953,
-        y: 538,
-        width: 86,
-        height: 47,
+        x: 953, // Ignored in favor of dynamic calculation
+        y: 538, // Ignored
+        width: 64, // Ignored
+        height: 47, // Ignored
         fontFamily: "CustomRobotoMono",
         fontSize: 36,
         fontWeight: "bold",
@@ -119,6 +129,8 @@ export default function YTImage(props: YTImageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (props.handleIsLoading) props.handleIsLoading(true);
+
     const loadImage = (src: string): Promise<HTMLImageElement> => {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -143,10 +155,19 @@ export default function YTImage(props: YTImageProps) {
       if (!ctx) return;
 
       try {
+        const qrDataUrl = await QRCode.toDataURL(videoUrl, {
+          margin: 1,
+          width: layout.qrcode.width,
+          color: {
+            dark: "#000000",
+            light: "#FFFFFF",
+          },
+        });
+
         const [thumbnailImg, avatarImg, qrImg] = await Promise.all([
           loadImage(thumbnailUrl),
           loadImage(avatarUrl),
-          loadImage(qrUrl),
+          loadImage(qrDataUrl),
           loadFont("CustomRobotoMono", fonts.mono),
           loadFont("CustomRobotoRegular", fonts.regular),
           loadFont("CustomRobotoSemiBold", fonts.semiBold),
@@ -169,7 +190,7 @@ export default function YTImage(props: YTImageProps) {
 
         const durationMetrics = ctx.measureText(durationText);
         const durationBgWidth =
-          durationMetrics.width + layout.duration.paddingX * 2;
+          durationMetrics.width - layout.duration.paddingX * 2;
 
         // Calculate X to keep it aligned to the right side of the visual area
         // Original X (932) + Original Width (128) = 1060 (right edge roughly)
@@ -272,8 +293,13 @@ export default function YTImage(props: YTImageProps) {
           layout.qrcode.width,
           layout.qrcode.height,
         );
+
+        const dataUrl = canvas.toDataURL("image/png");
+        props.handleGeneratedImageUrl && props.handleGeneratedImageUrl(dataUrl);
       } catch (error) {
         console.error("Error loading images:", error);
+      } finally {
+        if (props.handleIsLoading) props.handleIsLoading(false);
       }
     };
 
@@ -281,8 +307,13 @@ export default function YTImage(props: YTImageProps) {
   }, []);
 
   return (
-    <div className="mt-6">
-      <canvas ref={canvasRef} width={layout.width} height={layout.height} />
+    <div>
+      <canvas
+        ref={canvasRef}
+        width={layout.width}
+        height={layout.height}
+        className="hidden"
+      />
     </div>
   );
 }

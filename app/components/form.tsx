@@ -20,8 +20,12 @@ const formSchema = z.object({
 
 export default function Form({
   onResponse,
+  isLoading,
+  handleIsLoading,
 }: {
   onResponse: (data: any) => void;
+  isLoading: boolean;
+  handleIsLoading: (loading: boolean) => void;
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,6 +38,7 @@ export default function Form({
     // clear previous onResponse
     onResponse(null);
 
+    handleIsLoading(true);
     const res = await fetch("/api/yt", {
       method: "POST",
       headers: {
@@ -43,6 +48,7 @@ export default function Form({
     });
     const result = await res.json();
     onResponse(result);
+    handleIsLoading(false);
   };
 
   return (
@@ -77,8 +83,12 @@ export default function Form({
         </form>
         <CardFooter className="mt-4 px-0">
           <Field className="w-fit ml-auto">
-            <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
-              Submit
+            <Button
+              type="submit"
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Generate Image"}
             </Button>
           </Field>
         </CardFooter>

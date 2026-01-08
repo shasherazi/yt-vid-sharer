@@ -45,6 +45,7 @@ export async function POST(request: Request) {
   });
 
   const response = {
+    id: id,
     title: video.data.items![0].snippet!.title,
     publishedAt: video.data.items![0].snippet!.publishedAt,
     duration: video.data.items![0].contentDetails!.duration,
