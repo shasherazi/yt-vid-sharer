@@ -8,16 +8,18 @@ export async function POST(request: Request) {
   // https://youtu.be/dQw4w9WgXcQ?si=OW1ojMZjbg-sv8_d
   // https://www.youtube.com/watch?v=Ts6SW099X08
   // https://youtu.be/Ts6SW099X08
+  // https://www.youtube.com/shorts/qOaURdxBlvE
   const { url } = await request.json();
   const id = (() => {
     const urlObj = new URL(url);
     if (urlObj.hostname === "youtu.be") {
       return urlObj.pathname.slice(1).split("?")[0];
-    } else if (
-      urlObj.hostname === "www.youtube.com" ||
-      urlObj.hostname === "youtube.com"
-    ) {
-      return urlObj.searchParams.get("v");
+    } else if (urlObj.hostname === "www.youtube.com") {
+      if (urlObj.pathname === "/watch") {
+        return urlObj.searchParams.get("v");
+      } else if (urlObj.pathname.startsWith("/shorts/")) {
+        return urlObj.pathname.split("/")[2];
+      }
     }
     return null;
   })();

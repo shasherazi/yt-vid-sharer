@@ -65,7 +65,7 @@ export default function YTImage(props: YTImageProps) {
       height: 54,
       backgroundColor: "rgba(0, 0, 0, 0.6)",
       borderRadius: 10,
-      paddingX: 16, // Horizontal padding for the text
+      paddingX: 4, // Horizontal padding for the text
       text: {
         x: 953, // Ignored in favor of dynamic calculation
         y: 538, // Ignored
@@ -190,7 +190,7 @@ export default function YTImage(props: YTImageProps) {
 
         const durationMetrics = ctx.measureText(durationText);
         const durationBgWidth =
-          durationMetrics.width - layout.duration.paddingX * 2;
+          durationMetrics.width + layout.duration.paddingX * 2;
 
         // Calculate X to keep it aligned to the right side of the visual area
         // Original X (932) + Original Width (128) = 1060 (right edge roughly)
