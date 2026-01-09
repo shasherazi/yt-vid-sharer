@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Form from "./components/form";
 import YTImage from "./components/yt_image";
+import Navbar from "./components/navbar";
 
 interface FormResponse {
   id: string;
@@ -47,44 +48,48 @@ export default function Home() {
   };
 
   return (
-    <div className="h-dvh w-full flex flex-col items-center px-4">
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mt-10 md:mt-14 lg:mt-10">
-        YouTube Video Sharer
-      </h1>
+    <div className="h-dvh w-full flex flex-col items-center">
+      <Navbar />
 
-      <div className="w-full max-w-lg shrink-0">
-        <Form
-          onResponse={handleFormResponse}
-          isLoading={isLoading}
-          handleIsLoading={handleIsLoading}
-        />
-      </div>
+      <div className="px-4 w-full flex flex-col items-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
+          YouTube Video Sharer
+        </h1>
 
-      {formResponse?.error ? (
-        <p className="text-red-500 mt-4">{formResponse.error}</p>
-      ) : formResponse ? (
-        <YTImage
-          {...(formResponse as FormResponse)}
-          handleIsLoading={handleIsLoading}
-          handleGeneratedImageUrl={handleGeneratedImageUrl}
-        />
-      ) : null}
-
-      <div className="flex-1 w-full min-h-0 flex items-center justify-center py-6">
-        {/* if loading has finished and image is generated then show the image */}
-        {/* if loading isnt finished then dont show the skeleton image */}
-        {!isLoading && generatedImageUrl ? (
-          <img
-            src={generatedImageUrl}
-            alt="Generated YouTube Card"
-            className="max-h-full max-w-full w-auto h-auto rounded-xl shadow-2xl border border-gray-200 object-contain"
+        <div className="w-full max-w-lg shrink-0">
+          <Form
+            onResponse={handleFormResponse}
+            isLoading={isLoading}
+            handleIsLoading={handleIsLoading}
           />
-        ) : isLoading ? (
-          formResponse ? (
-            // Optional: A placeholder while canvas is drawing (usually milliseconds, but good for UX)
-            <div className="h-full aspect-1080/1014 max-h-full bg-gray-200 animate-pulse rounded-xl" />
-          ) : null
+        </div>
+
+        {formResponse?.error ? (
+          <p className="text-red-500 mt-4">{formResponse.error}</p>
+        ) : formResponse ? (
+          <YTImage
+            {...(formResponse as FormResponse)}
+            handleIsLoading={handleIsLoading}
+            handleGeneratedImageUrl={handleGeneratedImageUrl}
+          />
         ) : null}
+
+        <div className="flex-1 w-full min-h-0 flex items-center justify-center py-6">
+          {/* if loading has finished and image is generated then show the image */}
+          {/* if loading isnt finished then dont show the skeleton image */}
+          {!isLoading && generatedImageUrl ? (
+            <img
+              src={generatedImageUrl}
+              alt="Generated YouTube Card"
+              className="max-h-full max-w-full w-auto h-auto rounded-xl shadow-2xl border border-gray-200 object-contain"
+            />
+          ) : isLoading ? (
+            formResponse ? (
+              // Optional: A placeholder while canvas is drawing (usually milliseconds, but good for UX)
+              <div className="h-full aspect-1080/1014 max-h-full bg-gray-200 animate-pulse rounded-xl" />
+            ) : null
+          ) : null}
+        </div>
       </div>
     </div>
   );
